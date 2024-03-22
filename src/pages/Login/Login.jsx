@@ -1,12 +1,24 @@
+import { useContext } from 'react';
 import Google from '../../assets/google.png'
+import { AuthContext } from '../../provider/AuthProvider';
+import { Link } from 'react-router-dom';
 
 const Login = () => {
+    const {signIn} = useContext(AuthContext);
+
     const handleLogin = e => {
         e.preventDefault();
         const form = e.target;
         const email = form.email.value;
         const password = form.password.value;
         console.log(email, password)
+
+        //user
+        signIn(email, password)
+        .then(result => {
+            const user=result.user;
+            console.log(user);
+        })
     }
     return (
         <div>
@@ -40,6 +52,7 @@ const Login = () => {
                                 <input className="btn rounded-3xl bg-[#0B57D0] text-white" type="submit" value="Login" />
                             </div>
                         </form>
+                        <p className='text-center pb-5'><small className="text-sm text-[#6e6d7a]">Do not have an account? <Link className="underline font-bold" to="/signup">Sign Up</Link> </small></p>
                     </div>
                 </div>
             </div>
