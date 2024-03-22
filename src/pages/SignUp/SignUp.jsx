@@ -2,28 +2,39 @@ import { useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../provider/AuthProvider";
 import Swal from "sweetalert2";
+import useAxios from "../../hooks/useAxios";
 
 
 const SignUp = () => {
     const { createUser,updateUserProfile } = useContext(AuthContext)
     const navigate = useNavigate();
+    const axiosOpen = useAxios();
 
-    const handleSignUp = e => {
+    const handleSignUp = async (e) => {
         e.preventDefault();
         const form = e.target;
         const name = form.name.value;
         const url = form.url.value;
         const email = form.email.value;
         const password = form.password.value;
-        console.log(name, email, url, password) 
-
-        createUser(email, password)
-        .then(result => {
+    
+        try {
+        
+            const result = await createUser(email, password);
             const loggedUser = result.user;
-            console.log(loggedUser);
-            updateUserProfile(name, url)
-            .then(() => {
-                console.log('User Profile Info Updated')
+    
+      
+            await updateUserProfile(name, url);
+    
+          
+            const userInfo = {
+                name: name,
+                email: email,
+                photo: url
+            };
+            const res = await axiosOpen.post('/users', userInfo);
+            if (res.data.insertedId) {
+          
                 Swal.fire({
                     position: "center",
                     icon: "success",
@@ -31,11 +42,15 @@ const SignUp = () => {
                     showConfirmButton: false,
                     timer: 1500
                 });
+    
+               
                 navigate('/');
-            })
-            .catch(error => console.log(error))
-        })
-    }
+            }
+        } catch (error) {
+            console.log(error);
+       
+        }
+    };
     return (
         <div>
         <div className="hero min-h-screen">

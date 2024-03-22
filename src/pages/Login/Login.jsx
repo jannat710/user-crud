@@ -3,12 +3,32 @@ import Google from '../../assets/google.png'
 import { AuthContext } from '../../provider/AuthProvider';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
+import useAxios from '../../hooks/useAxios';
 
 const Login = () => {
     const {signIn,googleSignIn} = useContext(AuthContext);
     const navigate = useNavigate();
     const location = useLocation();
     const from = location.state?.from?.pathname || "/";
+    const axiosOpen = useAxios();
+
+    //Google
+    const handleGoogleSignIn = () => {
+        googleSignIn()
+            .then(result => {
+               
+                const userInfo = {
+                    email: result.user?.email,
+                    name: result.user?.displayName,
+                    photo: result.user?.photoURL
+                }
+                axiosOpen.post('/users', userInfo)
+                    .then(res => {
+                       
+                        navigate('/');
+                    })
+            })
+    }
 
 
 
@@ -42,7 +62,7 @@ const Login = () => {
                     <div className="w-96 px-8">
                         <h1 className="py-8 text-4xl font-bold">Login now!</h1>
                         <div className="form-control">
-                            <button className="btn rounded-3xl  border-2 border-[#0B57D0]">
+                            <button onClick={handleGoogleSignIn} className="btn rounded-3xl  border-2 border-[#0B57D0]">
                                 <img className="h-8" src={Google} alt="" />
                                 Sign in with Google
                             </button>
