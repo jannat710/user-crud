@@ -1,10 +1,12 @@
 import { useContext } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../provider/AuthProvider";
+import Swal from "sweetalert2";
 
 
 const SignUp = () => {
-    const { createUser } = useContext(AuthContext)
+    const { createUser,updateUserProfile } = useContext(AuthContext)
+    const navigate = useNavigate();
 
     const handleSignUp = e => {
         e.preventDefault();
@@ -19,6 +21,19 @@ const SignUp = () => {
         .then(result => {
             const loggedUser = result.user;
             console.log(loggedUser);
+            updateUserProfile(name, url)
+            .then(() => {
+                console.log('User Profile Info Updated')
+                Swal.fire({
+                    position: "center",
+                    icon: "success",
+                    title: "User created successfully",
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+                navigate('/');
+            })
+            .catch(error => console.log(error))
         })
     }
     return (

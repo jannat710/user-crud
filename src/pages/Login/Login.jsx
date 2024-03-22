@@ -5,10 +5,14 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 
 const Login = () => {
-    const {signIn} = useContext(AuthContext);
+    const {signIn,googleSignIn} = useContext(AuthContext);
     const navigate = useNavigate();
     const location = useLocation();
     const from = location.state?.from?.pathname || "/";
+
+
+
+    
 
     const handleLogin = e => {
         e.preventDefault();
