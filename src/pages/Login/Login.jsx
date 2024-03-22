@@ -1,10 +1,14 @@
 import { useContext } from 'react';
 import Google from '../../assets/google.png'
 import { AuthContext } from '../../provider/AuthProvider';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
 
 const Login = () => {
     const {signIn} = useContext(AuthContext);
+    const navigate = useNavigate();
+    const location = useLocation();
+    const from = location.state?.from?.pathname || "/";
 
     const handleLogin = e => {
         e.preventDefault();
@@ -15,10 +19,17 @@ const Login = () => {
 
         //user
         signIn(email, password)
-        .then(result => {
-            const user=result.user;
-            console.log(user);
-        })
+            .then(result => {
+                const user = result.user;
+                //console.log(user.email);
+                Swal.fire("Good job!", "User logged in Successfully!", "success")
+                navigate(from, { replace: true });
+            })
+            .catch(error => {
+                const user = error.user;
+                console.log(user);
+                Swal.fire('Error', 'Invalid!', 'Login failed');
+            });
     }
     return (
         <div>
